@@ -144,13 +144,24 @@ def getWindowsAt(x, y):
     return windowsAtXY
 
 
-def getWindowsWithTitle(title):
-    """Returns a list of Window objects that substring match ``title`` in their title text."""
+def getWindowsWithTitle(title, equal_or_in='in'):
+    """Returns a list of Window objects that substring match ``title`` in their title text.
+
+    * ``title`` (str, required): The title of the window(s).
+    * ``equal_or_in`` (str, optional): Exactly match or in the window(s) title text.
+    """
     hWndsAndTitles = _getAllTitles()
     windowObjs = []
     for hWnd, winTitle in hWndsAndTitles:
-        if title.upper() in winTitle.upper(): # do a case-insensitive match
-            windowObjs.append(Win32Window(hWnd))
+        if equal_or_in == 'in':
+            if title.upper() in winTitle.upper(): # do a case-insensitive match
+                windowObjs.append(Win32Window(hWnd))
+        elif equal_or_in == '=':
+            if title.upper() == winTitle.upper(): # do a case-insensitive match
+                windowObjs.append(Win32Window(hWnd))
+        else:
+            raise PyGetWindowException(("Error code: getWindowsWithTitle(title, equal_or_in='in')"
+                                        " equal_or_in shuould in ['in', '=']"))
     return windowObjs
 
 
